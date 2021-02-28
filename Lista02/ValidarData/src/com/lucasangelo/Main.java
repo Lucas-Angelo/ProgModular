@@ -44,7 +44,7 @@ public class Main {
         System.out.println();
 
         System.out.println("Questão 5: ");
-        System.out.print("A última data utilizada no programa foi: ");
+        System.out.print("A data mais recente utilizada foi: ");
         Data ultimaData = new Data();
         ultimaData.imprimir();
     }

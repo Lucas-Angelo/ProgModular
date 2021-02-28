@@ -32,17 +32,17 @@ public class Data {
     private void registrarUltimaData(Data data) {
         String dataStr;
         String dia, mes;
-        if (this.dia>=1 && this.dia<=9)
-            dia = "0" + this.dia;
+        if (data.dia>=1 && data.dia<=9)
+            dia = "0" + data.dia;
         else
-            dia = Integer.toString(this.dia);
+            dia = Integer.toString(data.dia);
 
-        if (this.mes>=1 && this.mes<=9)
-            mes = "0" + this.mes;
+        if (data.mes>=1 && data.mes<=9)
+            mes = "0" + data.mes;
         else
-            mes = Integer.toString(this.mes);
+            mes = Integer.toString(data.mes);
 
-        dataStr = dia + "/" + mes + "/" + this.ano;
+        dataStr = dia + "/" + mes + "/" + data.ano;
 
         ArquivoTextoEscrita escrita = new ArquivoTextoEscrita();
 
@@ -51,7 +51,7 @@ public class Data {
         escrita.fecharArquivo();
     }
 
-    private boolean init(String data) throws Exception {
+    private void init(String data) throws Exception {
         int dataValores[] = dividirData(data);
         int dia = dataValores[0];
         int mes = dataValores[1];
@@ -70,10 +70,6 @@ public class Data {
             this.mes = mes;
             this.ano = ano;
         }
-
-        registrarUltimaData(this);
-
-        return true;
     }
 
     private int[] dividirData(String data) throws Exception {
@@ -206,10 +202,13 @@ public class Data {
         if(diasAno1>diasAno2) {
             System.out.print("A data mais recente é: ");
             this.imprimir();
+            registrarUltimaData(this);
         } else {
             System.out.print("A data mais recente é: ");
             data.imprimir();
+            registrarUltimaData(data);
         }
+
     }
 
     private int contarQuantidadeBissextosEmPeriodo(int anoMenor, int anoMaior) {

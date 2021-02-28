@@ -17,8 +17,8 @@ public class Main {
         Data dataOriginal = new Data(dataStr);
         System.out.print("Data original: ");
         dataOriginal.imprimir();
-        System.out.print("Data original com 9 dias adicionados: ");
-        Data dataComNoveDiasAMais = dataOriginal.adicionarDias(9);
+        System.out.print("Data original com 1000 dias adicionados: ");
+        Data dataComNoveDiasAMais = dataOriginal.adicionarDias(1000);
         dataComNoveDiasAMais.imprimir();
 
         System.out.println();
@@ -39,12 +39,16 @@ public class Main {
         data1.imprimir();
         System.out.print("E a data 2: ");
         data2.imprimir();
-        data1.verificarMaisRecente(data2);
+        if(data1.verificarMaisRecente(data2)){
+            System.out.println("A data 1 é mais recente!");
+        } else {
+            System.out.println("A data 2 é mais recente!");
+        }
 
         System.out.println();
 
         System.out.println("Questão 5: ");
-        System.out.print("A data mais recente utilizada foi: ");
+        System.out.print("A data mais recente utilizada no programa foi: ");
         Data ultimaData = new Data();
         ultimaData.imprimir();
     }

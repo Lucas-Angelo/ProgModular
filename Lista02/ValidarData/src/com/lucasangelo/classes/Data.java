@@ -2,56 +2,32 @@ package com.lucasangelo.classes;
 
 public class Data {
 
+    static boolean arquivoIniciado = false;
     int dia;
     int mes;
     int ano;
-
-    // Questão 5
-    public Data(String data) throws Exception {
-        init(data);
-    }
 
     public Data() throws Exception {
         String data = lerUltimaData();
         init(data);
     }
 
-    private String lerUltimaData() {
-        String linhaLida;
-
-        ArquivoTextoLeitura leitura = new ArquivoTextoLeitura();
-        leitura.abrirArquivo("./ultimaData.txt");
-
-        linhaLida = leitura.ler();
-
-        leitura.fecharArquivo();
-
-        return linhaLida;
+    public Data(String data) throws Exception {
+        init(data);
     }
 
-    private void registrarUltimaData(Data data) {
-        String dataStr;
-        String dia, mes;
-        if (data.dia>=1 && data.dia<=9)
-            dia = "0" + data.dia;
-        else
-            dia = Integer.toString(data.dia);
-
-        if (data.mes>=1 && data.mes<=9)
-            mes = "0" + data.mes;
-        else
-            mes = Integer.toString(data.mes);
-
-        dataStr = dia + "/" + mes + "/" + data.ano;
-
-        ArquivoTextoEscrita escrita = new ArquivoTextoEscrita();
-
-        escrita.abrirArquivo("./ultimaData.txt");
-        escrita.escrever(dataStr); // Escreve no arquivo criado o log.
-        escrita.fecharArquivo();
+    public Data(String data, boolean arquivo) throws Exception {
+        int[] dataArray = dividirData(data);
+        this.dia = dataArray[0];
+        this.mes = dataArray[1];
+        this.ano = dataArray[2];
     }
 
     private void init(String data) throws Exception {
+
+        if(!arquivoIniciado)
+            iniciarArquivo();
+
         int dataValores[] = dividirData(data);
         int dia = dataValores[0];
         int mes = dataValores[1];
@@ -69,7 +45,71 @@ public class Data {
             this.dia = dia;
             this.mes = mes;
             this.ano = ano;
+            registrarDataMaisRecente(this);
         }
+
+    }
+
+    private void iniciarArquivo() {
+        arquivoIniciado = true;
+        ArquivoTextoEscrita escrita = new ArquivoTextoEscrita();
+
+        escrita.abrirArquivo("./ultimaData.txt");
+        escrita.escrever("01/01/1900");
+        escrita.fecharArquivo();
+    }
+
+    private String lerUltimaData() {
+        String linhaLida;
+
+        ArquivoTextoLeitura leitura = new ArquivoTextoLeitura();
+        leitura.abrirArquivo("./ultimaData.txt");
+
+        linhaLida = leitura.ler();
+
+        leitura.fecharArquivo();
+
+        return linhaLida;
+    }
+
+    // Questão 5
+    private void registrarDataMaisRecente(Data data) throws Exception {
+        String dataStrArquivo = lerUltimaData();
+        String dataStrAtual = dataParaString(data);
+
+        Data dataArquivo = new Data(dataStrArquivo, true);
+        Data dataAtual = new Data(dataStrAtual, true);
+
+        if(dataAtual.verificarMaisRecente(dataArquivo)){
+            dataAtual.adicionarDias(1);
+            dataStrAtual = dataParaString(dataAtual);
+
+            ArquivoTextoEscrita escrita = new ArquivoTextoEscrita();
+
+            escrita.abrirArquivo("./ultimaData.txt");
+            escrita.escrever(dataStrAtual);
+            escrita.fecharArquivo();
+        }
+
+    }
+
+    private String dataParaString(Data data) {
+        String dataStr;
+
+        String dia, mes;
+        if (data.dia>=1 && data.dia<=9)
+            dia = "0" + data.dia;
+        else
+            dia = Integer.toString(data.dia);
+
+        if (data.mes>=1 && data.mes<=9)
+            mes = "0" + data.mes;
+        else
+            mes = Integer.toString(data.mes);
+
+        dataStr = dia + "/" + mes + "/" + data.ano;
+
+        return dataStr;
     }
 
     private int[] dividirData(String data) throws Exception {
@@ -125,10 +165,17 @@ public class Data {
     }
 
     private boolean anoBissexto(int ano) {
-        if ((ano % 4 == 0) && (ano % 100 != 0 || ano % 400 == 0))
-            return true;
-        else
-            return false;
+        return (ano % 4 == 0) && (ano % 100 != 0 || ano % 400 == 0);
+    }
+
+    private int contarQuantidadeBissextosEmPeriodo(int anoMenor, int anoMaior) {
+        int qtd = 0;
+        while (anoMaior > anoMenor) {
+            if(anoBissexto(anoMaior))
+                qtd++;
+            anoMaior--;
+        }
+        return qtd;
     }
 
     // Questão 1
@@ -139,18 +186,16 @@ public class Data {
     // Questão 2
     public Data adicionarDias(int qtd) {
         Data novaData = this;
-        int ultimoDiaDoMes = capturarQuantidadeDiasNoMes(novaData.mes, novaData.ano);
 
-        novaData.dia += qtd;
+        novaData.dia = this.dia + qtd;
 
-        if(novaData.dia>ultimoDiaDoMes) {
-            novaData.dia = novaData.dia % ultimoDiaDoMes;
+        while (novaData.dia > capturarQuantidadeDiasNoMes(novaData.mes, novaData.ano)) {
+            novaData.dia = novaData.dia - capturarQuantidadeDiasNoMes(novaData.mes, novaData.ano);
             novaData.mes++;
-        }
-
-        if(novaData.mes>12){
-            novaData.mes = novaData.mes % 12;
-            novaData.ano++;
+            if (novaData.mes > 12) {
+                novaData.ano++;
+                novaData.mes = 1;
+            }
         }
 
         return novaData;
@@ -177,7 +222,8 @@ public class Data {
     }
 
     // Questão 4
-    public void verificarMaisRecente(Data data) {
+    public boolean verificarMaisRecente(Data data) {
+        boolean resp;
 
         int diasAno1 = 0;
         int diasAno2 = 0;
@@ -200,42 +246,18 @@ public class Data {
         diasAno2 = Math.abs(diasAno2) + qtdAnosBissextosAno2;
 
         if(diasAno1>diasAno2) {
-            System.out.print("A data mais recente é: ");
-            this.imprimir();
-            registrarUltimaData(this);
+            resp = true;
         } else {
-            System.out.print("A data mais recente é: ");
-            data.imprimir();
-            registrarUltimaData(data);
+            resp = false;
         }
 
+        return resp;
     }
 
-    private int contarQuantidadeBissextosEmPeriodo(int anoMenor, int anoMaior) {
-        int qtd = 0;
-        while (anoMaior > anoMenor) {
-            if(anoBissexto(anoMaior))
-                qtd++;
-            anoMaior--;
-        }
-        return qtd;
-    }
-
-    public void imprimir() {
-        String data;
-        String dia, mes;
-        if (this.dia>=1 && this.dia<=9)
-            dia = "0" + this.dia;
-        else
-            dia = Integer.toString(this.dia);
-
-        if (this.mes>=1 && this.mes<=9)
-            mes = "0" + this.mes;
-        else
-            mes = Integer.toString(this.mes);
-
-        data = dia + "/" + mes + "/" + this.ano;
+    public void imprimir() throws Exception {
+        String data = dataParaString(this);
         System.out.println(data);
+        registrarDataMaisRecente(this);
     }
 
 }

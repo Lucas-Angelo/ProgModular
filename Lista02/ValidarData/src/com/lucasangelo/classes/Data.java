@@ -16,7 +16,7 @@ public class Data {
         init(data);
     }
 
-    public Data(String data, boolean arquivo) throws Exception {
+    private Data(String data, boolean arquivo) throws Exception {
         int[] dataArray = dividirData(data);
         this.dia = dataArray[0];
         this.mes = dataArray[1];

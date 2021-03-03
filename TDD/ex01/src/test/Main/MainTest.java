@@ -17,16 +17,9 @@ public class MainTest {
         int N = 10;
         Conjunto aux = new Conjunto(N);
 
-        aux.addObjeto("0");
-        aux.addObjeto(1);
-        aux.addObjeto(00.1);
-        aux.addObjeto("Lucas");
-        aux.addObjeto('c');
-        aux.addObjeto("5");
-        aux.addObjeto("6");
-        aux.addObjeto("7");
-        aux.addObjeto("8");
-        aux.addObjeto("9");
+        for(int i=0; i<10; i++){
+            aux.addObjeto(i);
+        }
 
         int tam = aux.getTamanho();
         Assertions.assertEquals(tam, N);
@@ -70,6 +63,19 @@ public class MainTest {
 
         int tam = aux.getTamanho();
         Assertions.assertEquals(tam, qtdObjetosAdicionados);
+    }
+
+    @Test
+    @DisplayName("Verificar se conjunto está cheio.")
+    void conjuntoCheio() {
+        int N = 2;
+        Conjunto aux = new Conjunto(N);
+
+        aux.addObjeto(1);
+        aux.addObjeto(2);
+
+        boolean cheio = aux.cheio();
+        Assertions.assertEquals(cheio, true);
     }
 
     @Test

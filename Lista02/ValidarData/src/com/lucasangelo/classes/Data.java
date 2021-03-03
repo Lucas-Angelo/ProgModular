@@ -2,31 +2,31 @@ package com.lucasangelo.classes;
 
 public class Data {
 
-    static boolean arquivoIniciado = false;
-    int dia;
-    int mes;
-    int ano;
+    private static Data dataMaisRecente;
+    private int dia;
+    private int mes;
+    private int ano;
 
-    public Data() throws Exception {
-        String data = lerUltimaData();
-        init(data);
+    public Data(){
+        this.dia = dataMaisRecente.dia;
+        this.mes = dataMaisRecente.mes;
+        this.ano = dataMaisRecente.ano;
     }
 
     public Data(String data) throws Exception {
         init(data);
     }
 
-    private Data(String data, boolean arquivo) throws Exception {
-        int[] dataArray = dividirData(data);
-        this.dia = dataArray[0];
-        this.mes = dataArray[1];
-        this.ano = dataArray[2];
+    private Data(String data, boolean privado) throws Exception {
+        if(privado) {
+            int[] dataArray = dividirData(data);
+            this.dia = dataArray[0];
+            this.mes = dataArray[1];
+            this.ano = dataArray[2];
+        }
     }
 
     private void init(String data) throws Exception {
-
-        if(!arquivoIniciado)
-            iniciarArquivo();
 
         int dataValores[] = dividirData(data);
         int dia = dataValores[0];
@@ -45,50 +45,25 @@ public class Data {
             this.dia = dia;
             this.mes = mes;
             this.ano = ano;
-            registrarDataMaisRecente(this);
+            if(dataMaisRecente==null)
+                dataMaisRecente=this;
+            else
+                verificarDataMaisRecente(this);
         }
 
     }
 
-    private void iniciarArquivo() {
-        arquivoIniciado = true;
-        ArquivoTextoEscrita escrita = new ArquivoTextoEscrita();
-
-        escrita.abrirArquivo("./ultimaData.txt");
-        escrita.escrever("01/01/1900");
-        escrita.fecharArquivo();
-    }
-
-    private String lerUltimaData() {
-        String linhaLida;
-
-        ArquivoTextoLeitura leitura = new ArquivoTextoLeitura();
-        leitura.abrirArquivo("./ultimaData.txt");
-
-        linhaLida = leitura.ler();
-
-        leitura.fecharArquivo();
-
-        return linhaLida;
-    }
-
     // Questão 5
-    private void registrarDataMaisRecente(Data data) throws Exception {
-        String dataStrArquivo = lerUltimaData();
+    private void verificarDataMaisRecente(Data data) throws Exception {
+        String dataMaisAtual = dataParaString(dataMaisRecente);
         String dataStrAtual = dataParaString(data);
 
-        Data dataArquivo = new Data(dataStrArquivo, true);
+        Data dataArquivo = new Data(dataMaisAtual, true);
         Data dataAtual = new Data(dataStrAtual, true);
 
         if(dataAtual.verificarMaisRecente(dataArquivo)){
             dataAtual.adicionarDias(1);
-            dataStrAtual = dataParaString(dataAtual);
-
-            ArquivoTextoEscrita escrita = new ArquivoTextoEscrita();
-
-            escrita.abrirArquivo("./ultimaData.txt");
-            escrita.escrever(dataStrAtual);
-            escrita.fecharArquivo();
+            dataMaisRecente = dataAtual;
         }
 
     }
@@ -250,14 +225,13 @@ public class Data {
         } else {
             resp = false;
         }
-
         return resp;
     }
 
     public void imprimir() throws Exception {
         String data = dataParaString(this);
         System.out.println(data);
-        registrarDataMaisRecente(this);
+        verificarDataMaisRecente(this);
     }
 
 }

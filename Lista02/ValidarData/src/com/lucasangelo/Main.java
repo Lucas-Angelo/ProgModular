@@ -35,9 +35,9 @@ public class Main {
         System.out.println();
 
         System.out.println("Questão 4: ");
-        System.out.print("Dentre a data 1: ");
+        System.out.print("Data 1: ");
         data1.imprimir();
-        System.out.print("E a data 2: ");
+        System.out.print("Data 2: ");
         data2.imprimir();
         if(data1.verificarMaisRecente(data2)){
             System.out.println("A data 1 é mais recente!");

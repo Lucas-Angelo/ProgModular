@@ -8,13 +8,12 @@ public class Produto {
 
     private static int totalVendido=0;
 
-    private static int etqComidas;
-    private static int etqBebidas;
-    private static int etqMaterialEscolar;
-
+    private static int etqComidas=0;
+    private static int etqBebidas=0;
+    private static int etqMaterialEscolar=0;
 
     private void init(String tipo, double preco, double margemDeVenda) throws Exception {
-        if(tipo.equals("bebidas") || tipo.equals("comidas") || tipo.equals("material escola"))
+        if(tipo.equals("bebidas") || tipo.equals("comidas") || tipo.equals("material escolar"))
             this.tipo = tipo;
         else
             throw new Exception("Tipo de produto inválido!");
@@ -27,6 +26,24 @@ public class Produto {
         this.precoDeCusto = preco;
 
         initValores();
+    }
+
+    private void initValores() {
+        if(tipo.equals("comidas")){
+            this.porcImposto = 0.18;
+            etqComidas++;
+        }
+        else if(tipo.equals("bebidas")){
+            this.porcImposto = 0.45;
+            etqBebidas++;
+        }
+        else if(tipo.equals("material escolar")){
+            this.porcImposto = 0.21;
+            etqMaterialEscolar++;
+        }
+
+        double aux = (this.precoDeCusto + (this.precoDeCusto*(margemDeVenda/100)));
+        this.precoDeVenda = aux + (aux*porcImposto);
     }
 
     public Produto(String tipo, double preco, double margemDeVenda) throws Exception {
@@ -53,15 +70,22 @@ public class Produto {
         return porcImposto;
     }
 
-    private void initValores() {
-        if(tipo.equals("comidas"))
-            this.porcImposto = 0.18;
-        else if(tipo.equals("bebidas"))
-            this.porcImposto = 0.18;
-        else if(tipo.equals("material escolar"))
-            this.porcImposto = 0.18;
+    public static int getTotalVendido() { return totalVendido; }
 
-        double aux = (this.precoDeCusto + (this.precoDeCusto*(margemDeVenda/100)));
-        this.precoDeVenda = aux + (aux*porcImposto);
+    public static int getEtqComidas() { return etqComidas; }
+
+    public static int getEtqBebidas() { return etqBebidas; }
+
+    public static int getEtqMaterialEscolar() { return etqMaterialEscolar; }
+
+    public void vender(String tipo) {
+        totalVendido++;
+
+        if(this.tipo.equals("comidas"))
+            etqComidas--;
+        else if(this.tipo.equals("bebidas"))
+            etqBebidas--;
+        else if(this.tipo.equals("material escolar"))
+            etqMaterialEscolar--;
     }
 }

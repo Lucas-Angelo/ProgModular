@@ -29,7 +29,6 @@ public class AlunoTeste {
         Assertions.assertEquals(aluno.isMatriculado(), false);
         turma.matricular(aluno);
         Assertions.assertEquals(aluno.isMatriculado(), true);
-        Assertions.assertEquals(aluno.getTurma(), turma);
 
         // Quando matricula o aluno ele ainda nao viu nenhuma aula
         for(int i=0; i<turma.getQtd_aulas(); i++) {
@@ -73,7 +72,8 @@ public class AlunoTeste {
         aluno.verProximaAula();
         aluno.fazerProximaAtividade(50.0);
 
-        Assertions.assertTrue(aluno.aprovado());
+        aluno.calcularInformacoes();
+        Assertions.assertTrue(aluno.isAprovado());
     }
 
 }

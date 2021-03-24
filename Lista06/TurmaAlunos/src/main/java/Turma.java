@@ -5,20 +5,22 @@ import java.text.DateFormat;
 public class Turma {
 
     private String codigo;
+    private int nivel;
+    private int turno;
+    private int qtd_aulas;
+    private int qtd_atividades;
 
     private static final int MAX_ALUNOS;
     private static final char turnos[];
-    protected static final double MIN_PONTOS;
-    protected static final double MIN_FREQUEN;
-    protected static final double ATIVIDADE_SOMA;
+
+    public static final double MIN_PONTOS;
+    public static final double MIN_FREQUEN;
+    public static final double ATIVIDADE_SOMA;
 
     private Aluno alunos[];
+
     private int matriculas;
-    private int nivel;
-    private int turno;
     private int vagas;
-    private int qtd_aulas;
-    private int qtd_atividades;
 
     static {
         MAX_ALUNOS=20;
@@ -74,18 +76,6 @@ public class Turma {
         return formatter.format(date);
     }
 
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public int getQtd_aulas() {
-        return qtd_aulas;
-    }
-
-    public int getQtd_atividades() {
-        return qtd_atividades;
-    }
-
     public void matricular(Aluno aluno) throws Exception {
 
         if(aluno.isMatriculado())
@@ -113,7 +103,7 @@ public class Turma {
         quickSort.sort(ordenados, matriculas);
 
         for(int i=0; i<matriculas; i++){
-            alunos[i].aprovado();
+            alunos[i].calcularInformacoes();
             stringBuilder.append("Nome: " + ordenados[i].getNome() + " | Nota: " + ordenados[i].getNota() + " | Aprovado: " + ordenados[i].isAprovado() + "\n");
         }
 
@@ -124,7 +114,7 @@ public class Turma {
     public double mediaNotas() {
         double somatorioMedias=0;
         for(int i=0; i< matriculas; i++) {
-            alunos[i].aprovado();
+            alunos[i].calcularInformacoes();
             somatorioMedias += alunos[i].getNota();
         }
         double media = somatorioMedias/matriculas;
@@ -135,7 +125,7 @@ public class Turma {
     public double mediaFrequencia() {
         double somatorioMedias=0;
         for(int i=0; i< matriculas; i++) {
-            alunos[i].aprovado();
+            alunos[i].calcularInformacoes();
             somatorioMedias += alunos[i].getFrequencia();
         }
         double media = somatorioMedias/matriculas;
@@ -150,7 +140,7 @@ public class Turma {
         double desempenho;
         for(int i=0; i< matriculas; i++) {
 
-            alunos[i].aprovado();
+            alunos[i].calcularInformacoes();
             desempenho = ((alunos[i].getNota()*8) + (alunos[i].getFrequencia()*2))/10;
 
             if(desempenho>maiorDesempenho) {
@@ -160,6 +150,18 @@ public class Turma {
         }
 
         return melhor;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public int getQtd_aulas() {
+        return qtd_aulas;
+    }
+
+    public int getQtd_atividades() {
+        return qtd_atividades;
     }
 
 }
